@@ -1,15 +1,17 @@
 #include <MQUnifiedsensor.h>
+#include <DHT.h>
 
-#define mq3pin 3
-#define mq4pin 5
-#define mq135pin 6
-#define mq7pin 9
-#define mq8pin 10
-#define mq9pin 11
+#define mq3pin A0
+#define mq4pin A1
+#define mq135pin A2
+#define mq7pin A3
+#define mq8pin A6
+#define mq9pin A7
+#define dhtPin 11
 #define yellowLed 12
 #define greenLed 13
 
-#define board "Arduino UNO"
+#define board "Arduino Nano"
 #define ratioMQ3CleanAir 60 //RS / R0 = 60 ppm 
 #define ratioMQ4CleanAir 4.4 //RS / R0 = 4.4 ppm 
 #define ratioMQ135CleanAir 3.6 //RS / R0 = 10 ppm 
@@ -18,6 +20,7 @@
 #define ratioMQ9CleanAir 9.6 //RS / R0 = 9.6 ppm 
 #define adc_bit_resolution 10 // 10 bit ADC 
 #define voltage_resolution 5 // Volt resolution to calc the voltage
+#define dhtType DHT22 
 
 //Declare Sensor
 MQUnifiedsensor mq3(board, voltage_resolution, adc_bit_resolution, mq3pin, board);
@@ -28,7 +31,7 @@ MQUnifiedsensor mq8(board, voltage_resolution, adc_bit_resolution, mq8pin, board
 MQUnifiedsensor mq9(board, voltage_resolution, adc_bit_resolution, mq9pin, board);
 
 bool calibrate = true;
-
+DHT dht(dhtPin, dhtType);
 
 void setup() {
   Serial.begin(9600);
@@ -36,6 +39,7 @@ void setup() {
   pinMode(greenLed, OUTPUT);
   pinMode(yellowLed, OUTPUT);
 
+  dht.begin();
   mq3.init();
   mq3.setRegressionMethod(1);
   //_PPM =  a*ratio^b
@@ -170,6 +174,9 @@ void loop() {
   mq9.setB(-2.186); // Flamable Gas
   float fg = mq9.readSensor();
 
+  float temperature = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
   Serial.print("Alcohol:"); 
   Serial.println(alcohol);
   
@@ -205,6 +212,12 @@ void loop() {
   
   Serial.print("FG:");
   Serial.println(fg);
+
+  Serial.print("Temperature:");
+  Serial.println(temperature);
+
+  Serial.print("Humidity:");
+  Serial.println(humidity);
 
   Serial.println("--------------------------------------------------------");
 
