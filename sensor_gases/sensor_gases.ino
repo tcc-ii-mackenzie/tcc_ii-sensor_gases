@@ -62,10 +62,10 @@ String apn_p = "arqia"; // Senha da APN
 String host = "";
 String metricsEndpoint = "/dispositivos";
 String payload = "";
-int id = 1;
+int id = 0;
 
 void setup() {
-  Serial.println("Inicializando...");
+  Serial.println("Inicializando o J3M...");
   Serial.begin(9600);
   Serial1.begin(9600);
   delay(10000);
@@ -98,7 +98,7 @@ void setup() {
     }
 
     host = doc["host"].as<String>();
-    //id = doc["id"].as<int>();
+    id = doc["id"].as<int>();
     
     configFile.close();
   } else {
@@ -116,7 +116,7 @@ void setup() {
   beginMqs();
   calibrateMqs();
   
-  Serial.println("Inicializacao concuida!");
+  Serial.println("Inicializacao do J3M concuida!");
 }
 
 void loop() { 

@@ -37,3 +37,10 @@ As bibliotecas utilizadas para desenvolver esse projeto estão dentro da pasta `
 
 Aqui encontra-se como o projeto foi e como deve ser montado:
 ![Esquemático do projeto](./esquema.jpg "Esquema do projeto")
+
+
+### Estrutura das Métricas
+---
+
+Os sensores `MQ3`, `MQ4`, `MQ135`, `MQ7`, `MQ8` e `MQ9` efetuam as métrias dos gases em `ppm`.
+O sensor `DHT22` efetua a métrica da temperatura em `ºC` e umidade do ar em `Percentual`.
