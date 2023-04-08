@@ -221,10 +221,6 @@ void loop() {
   Serial.println("Umidade:");
   Serial.println(humidity);
 
-  digitalWrite(greenLed, HIGH);
-  delay(1000);
-  digitalWrite(greenLed, LOW);
-
   docSend["id_arduino"] = id;
   docSend["alcool"] = alcohol;
   docSend["benzeno"] = benzene;
@@ -243,6 +239,10 @@ void loop() {
   
   serializeJson(docSend, payload);
   gsmHttpPost(metricsEndpoint, payload);
+
+  digitalWrite(greenLed, HIGH);
+  delay(1000);
+  digitalWrite(greenLed, LOW);
   
   Serial.println("Medicoes concluidas");
   Serial.println("-------------------------------------------");
