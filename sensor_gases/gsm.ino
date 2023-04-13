@@ -50,11 +50,6 @@ String gsmHttpPost(String endpoint, String postData) {
   return response;
 }
 
-String gsmGetTime() {
-  Serial.println("Obtendo data e hora via GPRS");
-  return gsmSendSerial("AT+CCLK?");
-}
-
 String mountUrl(String endpoint) {
   return host + "/api" + endpoint;
 }

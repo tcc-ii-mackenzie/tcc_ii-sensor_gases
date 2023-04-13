@@ -43,7 +43,7 @@
 #define voltage_resolution 5 // Volt resolution to calc the voltage
 #define dhtType DHT22 
 
-//Declare Sensor
+// Declarando Sensores MQ
 MQUnifiedsensor mq3(board, voltage_resolution, adc_bit_resolution, mq3pin, board);
 MQUnifiedsensor mq4(board, voltage_resolution, adc_bit_resolution, mq4pin, board);
 MQUnifiedsensor mq135(board, voltage_resolution,adc_bit_resolution, mq135pin, board);
@@ -69,6 +69,9 @@ String host = "";
 String metricsEndpoint = "/dispositivos";
 String payload = "";
 int id = 0;
+
+// Tempo
+long interval = 0;
 
 void setup() {
   Serial.println("Inicializando o J3M...");
@@ -118,6 +121,18 @@ void setup() {
 
     host = doc["host"].as<String>();
     id = doc["id"].as<int>();
+    interval = doc["interval"].as<long>();
+    interval = 600000;
+
+    if (interval < 60000) {
+      interval = 60000;
+    }
+
+    if (interval > 3600000) {
+      interval = 3600000;
+    }
+
+    Serial.println("Intervalo: " + (String) interval);
     
     configFile.close();
   } else {
@@ -127,9 +142,6 @@ void setup() {
   }
   
   gsmConfigGprs();
-  Serial.println("");
-  Serial.println(gsmGetTime());
-  Serial.println("");
   Serial.println("Inicializando sensores");
   lcdConfigMessage("Calibrando...");
   dht.begin();
@@ -140,138 +152,150 @@ void setup() {
   lcdConfigMessage("Inicializado!!!");
 }
 
-void loop() {   
-  Serial.println("Iniciando medicoes");
-  lcdLoopMessage("Coletando Dados");
-
+void loop() {
+  Serial.println("Iniciando serie de medicoes");
+  lcdLoopMessage("Inicando Coletas");
   delay(2000);
   
-  updateMqs();
-  payload = "";
-
-  mq3.setA(0.3934); 
-  mq3.setB(-1.504); // Alcohol
-  alcohol = mq3.readSensor(); 
-
-  mq3.setA(4.8387); 
-  mq3.setB(-2.68); // Benzene
-  benzene = mq3.readSensor(); 
+  for (int i = 1; i <= 5; i++) {
+    Serial.println("Iniciando medicoes");
+    lcdLoopMessage("Coletando Dados");
   
-  mq3.setA(7585.3); 
-  mq3.setB(-2.849); // Hexane
-  hexane = mq3.readSensor(); 
+    delay(2000);
 
-  mq4.setA(1012.7); 
-  mq4.setB(-2.786); // CH4
-  ch4 = mq4.readSensor(); 
-
-  mq4.setA(30000000);
-  mq4.setB(-8.308); // Smoke
-  smoke = mq4.readSensor(); 
- 
-  mq135.setA(110.47);
-  mq135.setB(-2.862); //CO2 
-  co2 = mq135.readSensor(); 
+    Serial.println("Métrica " + (String) i + "/5");
+    lcdLoopMessage("Coleta " + (String) i + "/5");
   
-  mq135.setA(44.947);
-  mq135.setB(-3.445); // Toluene
-  toluene = mq135.readSensor(); 
+    delay(2000);
+    
+    updateMqs();
+    payload = "";
   
-  mq135.setA(102.2 );
-  mq135.setB(-2.473); // NH4 
-  nh4 = mq135.readSensor(); 
+    mq3.setA(0.3934); 
+    mq3.setB(-1.504); // Alcohol
+    alcohol = mq3.readSensor(); 
   
-  mq135.setA(34.668);
-  mq135.setB(-3.369); // Acetone
-  acetone = mq135.readSensor(); 
- 
-  mq7.setA(99.042);
-  mq7.setB(-1.518); // CO
-  co = mq7.readSensor(); 
-
-  mq8.setA(976.97);
-  mq8.setB(-0.688); // H2
-  h2 = mq8.readSensor();
-
-  mq9.setA(1000.5);
-  mq9.setB(-2.186); // Flamable Gas
-  fg = mq9.readSensor();
-
-  temperature = dht.readTemperature();
-  humidity = dht.readHumidity();
-
-  Serial.println("Alcool:");
-  Serial.println(alcohol);
+    mq3.setA(4.8387); 
+    mq3.setB(-2.68); // Benzene
+    benzene = mq3.readSensor(); 
+    
+    mq3.setA(7585.3); 
+    mq3.setB(-2.849); // Hexane
+    hexane = mq3.readSensor(); 
   
-  Serial.println("Benzeno:");
-  Serial.println(benzene);
-
-  Serial.println("Hexano:");
-  Serial.println(hexane);
-
-  Serial.println("Metano:");
-  Serial.println(ch4);
-
-  Serial.println("Fumaça:");
-  Serial.println(smoke);
-
-  Serial.println("Dioxido de Carbono:");
-  Serial.println(co2);
-
-  Serial.println("Tolueno:");
-  Serial.println(toluene);
-
-  Serial.println("Amonia:");
-  Serial.println(nh4);
-
-  Serial.println("Acetona:");
-  Serial.println(acetone);
-
-  Serial.println("Monoxido de Carbono:");
-  Serial.println(co);
-
-  Serial.println("Hidrogenio:");
-  Serial.println(h2);
-
-  Serial.println("Gases Inflamaveis:");
-  Serial.println(fg);
-
-  Serial.println("Temperatura:");
-  Serial.println(temperature);
-
-  Serial.println("Umidade:");
-  Serial.println(humidity);
-
-  docSend["id_arduino"] = id;
-  docSend["alcool"] = alcohol;
-  docSend["benzeno"] = benzene;
-  docSend["hexano"] = hexane;
-  docSend["metano"] = ch4;
-  docSend["fumaca"] = smoke;
-  docSend["dioxido_carbono"] = co2;
-  docSend["tolueno"] = toluene;
-  docSend["amonia"] = nh4;
-  docSend["acetona"] = acetone;
-  docSend["monoxido_carbono"] = co;
-  docSend["hidrogenio"] = h2;
-  docSend["gases_inflamaveis"] = fg;
-  docSend["temperatura"] = temperature;
-  docSend["umidade"] = humidity;
+    mq4.setA(1012.7); 
+    mq4.setB(-2.786); // CH4
+    ch4 = mq4.readSensor(); 
   
-  serializeJson(docSend, payload);
-
-  lcdLoopMessage("Enviando Dados..");
-  gsmHttpPost(metricsEndpoint, payload);
-  lcdLoopMessage("Dados Enviados!");
-
-  delay(2000);
-  digitalWrite(greenLed, HIGH);
-  delay(1000);
-  digitalWrite(greenLed, LOW);
+    mq4.setA(30000000);
+    mq4.setB(-8.308); // Smoke
+    smoke = mq4.readSensor(); 
+   
+    mq135.setA(110.47);
+    mq135.setB(-2.862); //CO2 
+    co2 = mq135.readSensor(); 
+    
+    mq135.setA(44.947);
+    mq135.setB(-3.445); // Toluene
+    toluene = mq135.readSensor(); 
+    
+    mq135.setA(102.2 );
+    mq135.setB(-2.473); // NH4 
+    nh4 = mq135.readSensor(); 
+    
+    mq135.setA(34.668);
+    mq135.setB(-3.369); // Acetone
+    acetone = mq135.readSensor(); 
+   
+    mq7.setA(99.042);
+    mq7.setB(-1.518); // CO
+    co = mq7.readSensor(); 
   
-  Serial.println("Medicoes concluidas");
-  lcdLoopMessage("Coleta Efetuada!");
-  Serial.println("-------------------------------------------");
+    mq8.setA(976.97);
+    mq8.setB(-0.688); // H2
+    h2 = mq8.readSensor();
   
-  delay(10000);
+    mq9.setA(1000.5);
+    mq9.setB(-2.186); // Flamable Gas
+    fg = mq9.readSensor();
+  
+    temperature = dht.readTemperature();
+    humidity = dht.readHumidity();
+  
+    Serial.println("Alcool:");
+    Serial.println(alcohol);
+    
+    Serial.println("Benzeno:");
+    Serial.println(benzene);
+  
+    Serial.println("Hexano:");
+    Serial.println(hexane);
+  
+    Serial.println("Metano:");
+    Serial.println(ch4);
+  
+    Serial.println("Fumaça:");
+    Serial.println(smoke);
+  
+    Serial.println("Dioxido de Carbono:");
+    Serial.println(co2);
+  
+    Serial.println("Tolueno:");
+    Serial.println(toluene);
+  
+    Serial.println("Amonia:");
+    Serial.println(nh4);
+  
+    Serial.println("Acetona:");
+    Serial.println(acetone);
+  
+    Serial.println("Monoxido de Carbono:");
+    Serial.println(co);
+  
+    Serial.println("Hidrogenio:");
+    Serial.println(h2);
+  
+    Serial.println("Gases Inflamaveis:");
+    Serial.println(fg);
+  
+    Serial.println("Temperatura:");
+    Serial.println(temperature);
+  
+    Serial.println("Umidade:");
+    Serial.println(humidity);
+  
+    docSend["id_arduino"] = id;
+    docSend["alcool"] = alcohol;
+    docSend["benzeno"] = benzene;
+    docSend["hexano"] = hexane;
+    docSend["metano"] = ch4;
+    docSend["fumaca"] = smoke;
+    docSend["dioxido_carbono"] = co2;
+    docSend["tolueno"] = toluene;
+    docSend["amonia"] = nh4;
+    docSend["acetona"] = acetone;
+    docSend["monoxido_carbono"] = co;
+    docSend["hidrogenio"] = h2;
+    docSend["gases_inflamaveis"] = fg;
+    docSend["temperatura"] = temperature;
+    docSend["umidade"] = humidity;
+    
+    serializeJson(docSend, payload);
+  
+    lcdLoopMessage("Enviando Dados..");
+    gsmHttpPost(metricsEndpoint, payload);
+    lcdLoopMessage("Dados Enviados!");
+  
+    delay(2000);
+    digitalWrite(greenLed, HIGH);
+    delay(1000);
+    digitalWrite(greenLed, LOW);
+    
+    Serial.println("Medicoes concluidas");
+    lcdLoopMessage("Coleta Efetuada!");
+    Serial.println("-------------------------------------------");
+  }
+
+  lcdLoopMessage("");
+  delay(interval);
 }
