@@ -143,6 +143,8 @@ void setup() {
 void loop() {   
   Serial.println("Iniciando medicoes");
   lcdLoopMessage("Coletando Dados");
+
+  delay(2000);
   
   updateMqs();
   payload = "";
