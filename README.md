@@ -3,6 +3,7 @@
 
 O `J3M` é um projeto desenvolvido como um `TCC` na Universidade Presbiteriana Mackenzie por alunos do curso de Sistemas de Informação e Ciências da Computação.
 Seu objetivo é medir alguns gases, temperatura e umidade, para isso conta com sensores que o permite realizar essas métrias e fazer o envio das mesmas para uma `API` para posteriormente serem apresentadas em um `Dashboard` ou algo do tipo.
+O `J3M` efetua as medições por determinado tempo e esse tempo é configurado no `Cartão SD`.
 
 ### Componentes
 ---
