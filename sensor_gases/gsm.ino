@@ -26,6 +26,7 @@ String gsmSendSerial(String command) {
 }
 
 String gsmHttpPost(String endpoint, String postData) {
+  digitalWrite(blueLed, HIGH);
   String url = mountUrl(endpoint);
   String response = "";
   
@@ -44,6 +45,7 @@ String gsmHttpPost(String endpoint, String postData) {
   response = gsmSendSerial("AT+HTTPREAD");
   gsmSendSerial("AT+HTTPTERM");
   gsmSendSerial("AT+SAPBR=0,1");
+  digitalWrite(blueLed, LOW);
 
   return response;
 }

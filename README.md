@@ -9,13 +9,13 @@ Seu objetivo é medir alguns gases, temperatura e umidade, para isso conta com s
 
 - `Arduino Mega`: O `Arduino` que recebe os dados dos sensores e prepara para serem enviados a `API`.
 - `SIM800L`: Módulo de cartão SIM que faz o envio dos dados obtidos pelo `Arduino` para a `API`.
-- `RTC_DS3231`: Módulo de RTC, responsável pelo Clock e execução das métricas no tempo correto.
 - `Leitor de Cartão Micro SD`: Também conhecido como leitor de cartão de memória, onde fica o arquivo de configurações (Presente na raiz desse projeto, vide o arquivo `config.txt`), esse arquivo é lido e configura algumas coisas como `IP`/`Host` da `API` e `ID` do dispositivo.
 - `Buzzer`: Responsável por emitir avisos sonoros através de beeps caso haja algum erro no cartão SD.
 - `LEDs`:
     - `Vermelho`: Indica que houve algum erro no cartão SD (Piscada a cada 1 segundo, erro ao ler o conteúdo do arquivo de configurações. Piscada a cada 2 segundos, erro ao inicializar o cartão SD. Piscada a cada 3 segundos, Erro ao abrir o arquivo de configurações.).
     - `Amarelo`: Indica que os sensores `MQ` estão em processo de calibragem.
     - `Verde`: Indica que a métrica foi efetuada e enviada a `API` (Somente 1 piscada de 1 segundo).
+    - `Azul` Indica que está enviando uma requisição `HTTP` para a `API` (Permanece ligado durante todo o envio da requisição).
 - `Resistores de 220 Ohms`: Para diminuir um pouco a alimentação dos `LEDs`, para não correr o risco de queimar os mesmos.
 - `Lm2596`: Uma fonte de stepdown para alimentar o módulo `SIM800L`, (Pois o módulo só pode operar com tensão entre `3.4v` e `4.4v`), essa fonte foi regulada para `4.2v` para uso nesse projeto.
 - `Fonte de 7v a 12v`: A fonte para alimentar o módulo `SIM800L` através do `Lm2596` deve conter de `7v a 12v` e também ser uma fonte de `2A`, pois o módulo necessita dessa corrente para pleno funcionamento. (Para esse projeto, foi utilizada uma fonte de `9v` e `2A`).
@@ -26,6 +26,7 @@ Seu objetivo é medir alguns gases, temperatura e umidade, para isso conta com s
 - `MQ7`: Responsável por medir o monóxido de carbono no ambiente.
 - `MQ8`: Responsável por medir o hidrogênio no ambiente.
 - `MQ9`: Responsável por medir gases inflamáveis no ambiente.
+- `LCD 1602A + I2C`: Exibe as mensagens para quem estiver utilizando o `J3M` saiba o que o sensor está fazendo, sendo um complemento para os `LEDs`.
 
 ### Bibliotecas Utilizadas
 ---

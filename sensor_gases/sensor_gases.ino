@@ -1,9 +1,15 @@
 #include <ArduinoJson.h>
 #include <MQUnifiedsensor.h>
-#include <RTClib.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #include <DHT.h>
 #include <SPI.h>
 #include <SD.h>
+
+// Display LCD
+#define lcd_i2c_address 0x27
+#define lcd_disp_cols 16
+#define lcd_disp_rows 2
 
 // Sensores MQ
 #define mq3pin A0
@@ -23,6 +29,7 @@
 #define redLed 23
 #define yellowLed 24
 #define greenLed 25
+#define blueLed 26
 
 // Configuracoes MQ
 #define board "Arduino Mega 2560"
@@ -45,10 +52,9 @@ MQUnifiedsensor mq8(board, voltage_resolution, adc_bit_resolution, mq8pin, board
 MQUnifiedsensor mq9(board, voltage_resolution, adc_bit_resolution, mq9pin, board);
 
 DHT dht(dhtPin, dhtType);
-DateTime rtcTime;
-RTC_DS3231 rtc;
 StaticJsonDocument<192> doc;
 DynamicJsonDocument docSend(1024);
+LiquidCrystal_I2C lcd(lcd_i2c_address, lcd_disp_cols, lcd_disp_rows);
 
 // Medicao dos gases
 float alcohol, benzene, hexane, ch4, smoke, co2, toluene, nh4, acetone, co, h2, fg, temperature, humidity = 0;
@@ -68,23 +74,35 @@ void setup() {
   Serial.println("Inicializando o J3M...");
   Serial.begin(9600);
   Serial1.begin(9600);
-  delay(10000);
+
+  lcd.init();
+  lcd.clear();
+  lcd.setBacklight(HIGH);
+  lcdInitializeMessage();
 
   pinMode(redLed, OUTPUT);
   pinMode(greenLed, OUTPUT);
   pinMode(yellowLed, OUTPUT);
+  pinMode(blueLed, OUTPUT);
+
+  delay(10000);
   
   while (Serial1.available()) {
     Serial.write(Serial1.read());
   }
-
+  
   Serial.println("Inicializando o cartao SD");
+  lcdConfigMessage("Iniciando SD");
   while (!SD.begin(csPin)) {
+    lcd.setCursor(0, 1);
+    lcd.print("Inciando SD");
     Serial.println("Erro ao inicializar cartao SD");
+    lcdConfigMessage("Erro Iniciar SD");
     errorLed(2000);
   }
 
   Serial.println("Lendo conteudo do cartao SD");
+  lcdConfigMessage("Lendo Cartao SD");
   File configFile = SD.open("config.txt");
  
   if (configFile) {
@@ -93,6 +111,7 @@ void setup() {
     if (error) {
       while (true) {
         Serial.println("Erro ler conteudo do arquivo");
+        lcdConfigMessage("Erro Leitura SD");
         errorLed(1000);
       }
     }
@@ -103,6 +122,7 @@ void setup() {
     configFile.close();
   } else {
     Serial.println("Erro ao abrir o arquivo");
+    lcdConfigMessage("Erro Abrir JSON");
     errorLed(3000);
   }
   
@@ -111,20 +131,19 @@ void setup() {
   Serial.println(gsmGetTime());
   Serial.println("");
   Serial.println("Inicializando sensores");
-  rtc.begin();
+  lcdConfigMessage("Calibrando...");
   dht.begin();
   beginMqs();
   calibrateMqs();
   
   Serial.println("Inicializacao do J3M concuida!");
+  lcdConfigMessage("Inicializado!!!");
 }
 
-void loop() { 
+void loop() {   
   Serial.println("Iniciando medicoes");
-  /*rtcTime = rtc.now();
-  Serial.println(rtcTime.twelveHour());
-  Serial.println(rtcTime.minute());
-  Serial.println(rtcTime.second());*/
+  lcdLoopMessage("Coletando Dados");
+  
   updateMqs();
   payload = "";
 
@@ -238,13 +257,18 @@ void loop() {
   docSend["umidade"] = humidity;
   
   serializeJson(docSend, payload);
-  gsmHttpPost(metricsEndpoint, payload);
 
+  lcdLoopMessage("Enviando Dados..");
+  gsmHttpPost(metricsEndpoint, payload);
+  lcdLoopMessage("Dados Enviados!");
+
+  delay(2000);
   digitalWrite(greenLed, HIGH);
   delay(1000);
   digitalWrite(greenLed, LOW);
   
   Serial.println("Medicoes concluidas");
+  lcdLoopMessage("Coleta Efetuada!");
   Serial.println("-------------------------------------------");
   
   delay(10000);
