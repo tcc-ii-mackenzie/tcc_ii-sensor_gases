@@ -9,6 +9,7 @@ Seu objetivo é medir alguns gases, temperatura e umidade, para isso conta com s
 
 - `Arduino Mega`: O `Arduino` que recebe os dados dos sensores e prepara para serem enviados a `API`.
 - `SIM800L`: Módulo de cartão SIM que faz o envio dos dados obtidos pelo `Arduino` para a `API`.
+- `Antena GPRS`: Responsável pela captação de sinal para a operação do módulo `SIM800L`.
 - `Leitor de Cartão Micro SD`: Também conhecido como leitor de cartão de memória, onde fica o arquivo de configurações (Presente na raiz desse projeto, vide o arquivo `config.txt`), esse arquivo é lido e configura algumas coisas como `IP`/`Host` da `API` e `ID` do dispositivo.
 - `Buzzer`: Responsável por emitir avisos sonoros através de beeps caso haja algum erro no cartão SD.
 - `LEDs`:
