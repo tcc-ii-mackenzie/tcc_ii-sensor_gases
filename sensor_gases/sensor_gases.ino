@@ -71,7 +71,7 @@ String payload = "";
 int id = 0;
 
 // Tempo
-long interval = 0;
+unsigned long timerStart, timerEnd, interval = 0;
 
 void setup() {
   Serial.println("Inicializando o J3M...");
@@ -122,7 +122,6 @@ void setup() {
     host = doc["host"].as<String>();
     id = doc["id"].as<int>();
     interval = doc["interval"].as<long>();
-    interval = 600000;
 
     if (interval < 60000) {
       interval = 60000;
@@ -153,6 +152,8 @@ void setup() {
 }
 
 void loop() {
+  timerStart = millis();
+  
   Serial.println("Iniciando serie de medicoes");
   lcdLoopMessage("Inicando Coletas");
   delay(2000);
@@ -296,6 +297,9 @@ void loop() {
     Serial.println("-------------------------------------------");
   }
 
+  timerEnd = millis();
+
   lcdLoopMessage("");
-  delay(interval);
+  
+  delay(interval - (timerEnd - timerStart));
 }
