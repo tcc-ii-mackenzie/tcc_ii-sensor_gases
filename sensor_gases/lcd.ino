@@ -1,7 +1,7 @@
 void lcdInitializeMessage() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Inciando J3M");
+  lcd.print("Iniciando J3M");
 }
 
 void lcdConfigMessage(String message) {
