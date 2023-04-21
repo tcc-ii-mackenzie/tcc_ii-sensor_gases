@@ -98,7 +98,7 @@ void setup() {
   lcdConfigMessage("Iniciando SD");
   while (!SD.begin(csPin)) {
     lcd.setCursor(0, 1);
-    lcd.print("Inciando SD");
+    lcd.print("Iniciando SD");
     Serial.println("Erro ao inicializar cartao SD");
     lcdConfigMessage("Erro Iniciar SD");
     errorLed(2000);
@@ -155,7 +155,7 @@ void loop() {
   timerStart = millis();
   
   Serial.println("Iniciando serie de medicoes");
-  lcdLoopMessage("Inicando Coletas");
+  lcdLoopMessage("Iniciando Coletas");
   delay(2000);
   
   for (int i = 1; i <= 5; i++) {
