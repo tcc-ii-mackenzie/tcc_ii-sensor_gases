@@ -94,52 +94,8 @@ void setup() {
     Serial.write(Serial1.read());
   }
   
-  Serial.println("Inicializando o cartao SD");
-  lcdConfigMessage("Iniciando SD");
-  while (!SD.begin(csPin)) {
-    lcd.setCursor(0, 1);
-    lcd.print("Iniciando SD");
-    Serial.println("Erro ao inicializar cartao SD");
-    lcdConfigMessage("Erro Iniciar SD");
-    errorLed(2000);
-  }
-
-  Serial.println("Lendo conteudo do cartao SD");
-  lcdConfigMessage("Lendo Cartao SD");
-  File configFile = SD.open("config.txt");
- 
-  if (configFile) {
-    DeserializationError error = deserializeJson(doc, configFile);
-  
-    if (error) {
-      while (true) {
-        Serial.println("Erro ler conteudo do arquivo");
-        lcdConfigMessage("Erro Leitura SD");
-        errorLed(1000);
-      }
-    }
-
-    host = doc["host"].as<String>();
-    id = doc["id"].as<int>();
-    interval = doc["interval"].as<long>();
-
-    if (interval < 60000) {
-      interval = 60000;
-    }
-
-    if (interval > 3600000) {
-      interval = 3600000;
-    }
-
-    Serial.println("Intervalo: " + (String) interval);
-    
-    configFile.close();
-  } else {
-    Serial.println("Erro ao abrir o arquivo");
-    lcdConfigMessage("Erro Abrir JSON");
-    errorLed(3000);
-  }
-  
+  sdCardInit();
+  readConfigs(sdCardRead());
   gsmConfigGprs();
   Serial.println("Inicializando sensores");
   lcdConfigMessage("Calibrando...");
