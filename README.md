@@ -33,7 +33,14 @@ O `J3M` efetua as medições por determinado tempo e esse tempo é configurado n
 ### Bibliotecas Utilizadas
 ---
 
-As bibliotecas utilizadas para desenvolver esse projeto estão dentro da pasta `bibliotecas`.
+As bibliotecas de terceiros utilizadas para desenvolver esse projeto estão dentro da pasta `bibliotecas`, sendo elas:
+
+- `ArduinoJson`: Responsável por efetuar a leitura do `JSON` do arquivo de configurações dentro do `Cartão Micro SD` e preparar o `JSON` com as métricas com a finalidade de enviar para a `API`.
+- `DHT`: Responsável pelo funcionamento do módulo `DHT22` para a leitura de temperatura e umidade.
+- `LiquidCrystal_I2C`: Responsável pelo funcionamento do módulo `LCD 1602A + I2C`, principalmente por utilizar a arquitetura `I2C` para o funcionamento do `Display LCD` para a exibição de mensagens.
+- `MQUnifiedsensor`: Responsável pelo funcionamento dos módulos `MQs`, os `MQs` efetuam as leituras de gases.
+
+As demais bibliotecas utilizadas são bibliotecas disponibilizadas pela instalação padrão do `Arduino IDE`.
 
 ### Esquemático do Projeto
 ---
