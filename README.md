@@ -9,8 +9,7 @@ O `J3M` efetua as medições por determinado tempo e esse tempo é configurado n
 ---
 
 - `Arduino Mega`: O `Arduino` que recebe os dados dos sensores e prepara para serem enviados a `API`.
-- `SIM800L`: Módulo de cartão SIM que faz o envio dos dados obtidos pelo `Arduino` para a `API`.
-- `Antena GPRS`: Responsável pela captação de sinal para a operação do módulo `SIM800L`.
+- `ESP-01`: Módulo de `wi-fi` que faz o envio dos dados obtidos pelo `Arduino` para a `API`.
 - `Leitor de Cartão Micro SD`: Também conhecido como leitor de cartão de memória, onde fica o arquivo de configurações (Presente na raiz desse projeto, vide o arquivo `config.txt`), esse arquivo é lido e configura algumas coisas como `IP`/`Host` da `API` e `ID` do dispositivo.
 - `Buzzer`: Responsável por emitir avisos sonoros através de beeps caso haja algum erro no cartão SD.
 - `LEDs`:
@@ -19,8 +18,6 @@ O `J3M` efetua as medições por determinado tempo e esse tempo é configurado n
     - `Verde`: Indica que a métrica foi efetuada e enviada a `API` (Somente 1 piscada de 1 segundo).
     - `Azul` Indica que está enviando uma requisição `HTTP` para a `API` (Permanece ligado durante todo o envio da requisição).
 - `Resistores de 220 Ohms`: Para diminuir um pouco a alimentação dos `LEDs`, para não correr o risco de queimar os mesmos.
-- `Lm2596`: Uma fonte de stepdown para alimentar o módulo `SIM800L`, (Pois o módulo só pode operar com tensão entre `3.4v` e `4.4v`), essa fonte foi regulada para `4.2v` para uso nesse projeto.
-- `Fonte de 7v a 12v`: A fonte para alimentar o módulo `SIM800L` através do `Lm2596` deve conter de `7v a 12v` e também ser uma fonte de `2A`, pois o módulo necessita dessa corrente para pleno funcionamento. (Para esse projeto, foi utilizada uma fonte de `9v` e `2A`).
 - `DHT22`: Responsável por medir a temperatura e a umidade do ambiente.
 - `MQ3`: Responsável por medir o álcool, benzeno e hexano no ambiente.
 - `MQ4`: Responsável por medir o metano e fumaça no ambiente.

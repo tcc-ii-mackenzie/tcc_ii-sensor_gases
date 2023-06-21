@@ -6,6 +6,9 @@
 #include <SPI.h>
 #include <SD.h>
 
+// Wi-Fi Debug
+#define DEBUG true
+
 // Display LCD
 #define lcd_i2c_address 0x27
 #define lcd_disp_cols 16
@@ -59,13 +62,13 @@ LiquidCrystal_I2C lcd(lcd_i2c_address, lcd_disp_cols, lcd_disp_rows);
 // Medicao dos gases
 float alcohol, benzene, hexane, ch4, smoke, co2, toluene, nh4, acetone, co, h2, fg, temperature, humidity = 0;
 
-// APN
-String apn = "marketplaceiot.arqia.br"; // APN
-String apn_u = "arqia"; // Usuário da APN
-String apn_p = "arqia"; // Senha da APN
+// WIFI
+String wifi_ssid = "";
+String wifi_password = "";
 
 // API
 String host = "";
+String port = "";
 String metricsEndpoint = "/dispositivos";
 String payload = "";
 int id = 0;
@@ -76,7 +79,7 @@ unsigned long timerStart, timerEnd, interval = 0;
 void setup() {
   Serial.println("Inicializando o J3M...");
   Serial.begin(9600);
-  Serial1.begin(9600);
+  Serial1.begin(115200);
 
   lcd.init();
   lcd.clear();
@@ -96,7 +99,7 @@ void setup() {
   
   sdCardInit();
   readConfigs(sdCardRead());
-  gsmConfigGprs();
+  wifiConfig();
   Serial.println("Inicializando sensores");
   lcdConfigMessage("Calibrando...");
   dht.begin();
@@ -240,7 +243,7 @@ void loop() {
     serializeJson(docSend, payload);
   
     lcdLoopMessage("Enviando Dados..");
-    gsmHttpPost(metricsEndpoint, payload);
+    wifiSendData(metricsEndpoint, payload);
     lcdLoopMessage("Dados Enviados!");
   
     delay(2000);

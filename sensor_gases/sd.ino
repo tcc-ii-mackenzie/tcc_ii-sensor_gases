@@ -29,10 +29,14 @@ void readConfigs(File configFile) {
     }
 
     host = doc["host"].as<String>();
+    port = doc["port"].as<String>();
     id = doc["id"].as<int>();
     interval = mountInterval(doc["interval"].as<long>());
+    wifi_ssid = doc["ssid"].as<String>();
+    wifi_password = doc["password"].as<String>();
     
     configFile.close();
+    Serial.println("Finalizada a leitura do cartao SD");
   } else {
     Serial.println("Erro ao abrir o arquivo");
     lcdConfigMessage("Erro Abrir JSON");
