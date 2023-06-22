@@ -6,7 +6,8 @@ void wifiConfig() {
   delay(10000);
 }
 
-void wifiSendData(String metricsEndpoint, String payload) {  
+void wifiSendData(String metricsEndpoint, String payload) {
+  digitalWrite(blueLed, HIGH);
   Serial.println(payload);
   
   String sendData = "POST /api" + metricsEndpoint + " HTTP/1.1\r\n";
@@ -22,6 +23,7 @@ void wifiSendData(String metricsEndpoint, String payload) {
   Serial.println(sendData); 
   espData("AT+CIPCLOSE=0", 1000, DEBUG);
   delay(2000);
+  digitalWrite(blueLed, LOW);
 }
 
 String espData(String command, const int timeout, boolean debug) {
